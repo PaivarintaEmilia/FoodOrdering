@@ -1,4 +1,4 @@
-import { StyleSheet, Image } from 'react-native';
+import { StyleSheet, Image, Pressable } from 'react-native';
 
 import EditScreenInfo from './EditScreenInfo';
 import { Text, View } from './Themed';
@@ -7,29 +7,38 @@ import Colors from '@/src/constants/Colors';
 import products from '@/assets/data/products';
 // Import the type of the product
 import { Product } from '../types';
+// Router import
+import { Link } from 'expo-router';
 
 
 // Url if there's no image
 export const defaultPizzaImage =
-    'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png';
+  'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png';
 
 // Props of the product
 type ProductListItemProps = {
-    product: Product;
+  product: Product;
 }
 
 
 const ProductListItem = ({ product }: ProductListItemProps) => {
   return (
-    <View style={styles.container}>
-      <Image 
-        source={{ uri: product.image || defaultPizzaImage }} 
-        style={styles.image}
-        resizeMode='contain'
-      />
-      <Text style={styles.title}>{product.name}</Text>
-      <Text style={styles.price}>${product.price}</Text>
-    </View>
+    /* Navigate to product-component */
+    <Link 
+      href={{
+        pathname: '/(tabs)/menu/[id]', // Define the dynamic route
+        params: { id: product.id.toString() } // Pass the dynamic id parameter
+      }} asChild>
+      <Pressable style={styles.container}>
+        <Image
+          source={{ uri: product.image || defaultPizzaImage }}
+          style={styles.image}
+          resizeMode='contain'
+        />
+        <Text style={styles.title}>{product.name}</Text>
+        <Text style={styles.price}>${product.price}</Text>
+      </Pressable>
+    </Link>
   );
 };
 
