@@ -27,13 +27,18 @@ export default function TabLayout() {
         headerShown: useClientOnlyValue(false, true),
       }}>
 
-      {/** Hide the index screen from the bottom nevigation menu */}
+      {/** Hide the index screen from the bottom navigation menu 
+       * 
+       * 
+      */}
+      
       <Tabs.Screen name='index' options={{ href: null }} />
+
 
       <Tabs.Screen
         name="menu"
         options={{
-          title: 'Menu',
+          title: 'Menuuu',
           headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="cutlery" color={color} />,
           headerRight: () => (
