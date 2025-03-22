@@ -1,14 +1,18 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
 // Import the data, so we can get the correct pizzaz data
 import products from '@/assets/data/products';
 import { defaultPizzaImage } from '@/src/components/ProductListItem';
+// IseState import for size selector
+import { useState } from 'react';
 
 const sizes = ['S', 'M', 'X', 'XL',]
 
 const ProductDetailScreen = () => {
     // With this we get the id from previous screen
     const { id } = useLocalSearchParams();
+
+    const [selectedSize, setSelectedSIze] = useState('M');
 
     // Get the correct data of a pizza
     const product = products.find((p) => p.id.toString() == id);
@@ -33,9 +37,25 @@ const ProductDetailScreen = () => {
 
             <View style={styles.sizes}>
                 {sizes.map((size) => (
-                    <View style={styles.size} key={size}>
-                        <Text style={styles.text}>{size}</Text>
-                    </View>
+                    <Pressable
+                        onPress={() => {
+                            setSelectedSIze(size)
+                        }}
+                        style={[
+                            styles.size, 
+                            { 
+                                backgroundColor: selectedSize === size ? 'gainsboro' : 'white'
+                            }
+                        ]} key={size}>
+                        <Text 
+                            style={[
+                                styles.sizeText,
+                                {
+                                    color: selectedSize === size ? 'black' : 'grey'
+                                }
+                            ]}
+                        >{size}</Text>
+                    </Pressable>
                 ))}
             </View>
 
@@ -74,7 +94,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    text: {
+    sizeText: {
         fontSize: 20,
         fontWeight: '500',
     },
