@@ -5,6 +5,8 @@ import products from '@/assets/data/products';
 import { defaultPizzaImage } from '@/src/components/ProductListItem';
 // IseState import for size selector
 import { useState } from 'react';
+// Import Button component
+import Button from '@/src/components/Button';
 
 const sizes = ['S', 'M', 'X', 'XL',]
 
@@ -16,6 +18,12 @@ const ProductDetailScreen = () => {
 
     // Get the correct data of a pizza
     const product = products.find((p) => p.id.toString() == id);
+
+    // Function for Button-element 
+    const addToCart = () => {
+        console.warn('Add to cart, size: ', selectedSize);
+    }
+
 
     // Check if the product exists 
     if (!product) {
@@ -61,6 +69,8 @@ const ProductDetailScreen = () => {
 
             <Text style={styles.price}>${product.price}</Text>
 
+            <Button onPress={addToCart} text='Add to Cart' ></Button>
+
         </View>
     );
 
@@ -79,6 +89,7 @@ const styles = StyleSheet.create({
     price: {
         fontSize: 18,
         fontWeight: 'bold',
+        marginTop: 'auto',
     },
     sizes: {
         flexDirection: 'row',
