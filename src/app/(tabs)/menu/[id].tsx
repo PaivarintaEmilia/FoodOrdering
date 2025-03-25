@@ -1,4 +1,4 @@
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
 // Import the data, so we can get the correct pizzaz data
 import products from '@/assets/data/products';
@@ -18,18 +18,26 @@ const ProductDetailScreen = () => {
     const { id } = useLocalSearchParams();
     const { addItem } = useCart(); // Function imported from the context
 
+    const router = useRouter();
+
     const [selectedSize, setSelectedSIze] = useState<PizzaSize>('M');
 
     // Get the correct data of a pizza
     const product = products.find((p) => p.id.toString() == id);
 
-    // Function for Button-element 
+    // Function for Button-element adding to cart
     const addToCart = () => {
         if (!product) {
             return;
-        }
-        addItem(product, selectedSize);
-    }
+        };
+        addItem(product, selectedSize);  
+    };
+
+    const goToCart = () => {
+        router.push('/cart');
+    };
+
+
 
 
     // Check if the product exists 
@@ -77,6 +85,7 @@ const ProductDetailScreen = () => {
             <Text style={styles.price}>${product.price}</Text>
 
             <Button onPress={addToCart} text='Add to Cart' ></Button>
+            <Button onPress={goToCart} text='Go to the Cart' ></Button>
 
         </View>
     );
