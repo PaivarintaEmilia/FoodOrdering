@@ -7,21 +7,28 @@ import { defaultPizzaImage } from '@/src/components/ProductListItem';
 import { useState } from 'react';
 // Import Button component
 import Button from '@/src/components/Button';
+// Add cart import
+import { useCart } from '@/src/providers/CartProvider';
+import { PizzaSize } from '@/src/types';
 
-const sizes = ['S', 'M', 'X', 'XL',]
+const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL',]
 
 const ProductDetailScreen = () => {
     // With this we get the id from previous screen
     const { id } = useLocalSearchParams();
+    const { addItem } = useCart(); // Function imported from the context
 
-    const [selectedSize, setSelectedSIze] = useState('M');
+    const [selectedSize, setSelectedSIze] = useState<PizzaSize>('M');
 
     // Get the correct data of a pizza
     const product = products.find((p) => p.id.toString() == id);
 
     // Function for Button-element 
     const addToCart = () => {
-        console.warn('Add to cart, size: ', selectedSize);
+        if (!product) {
+            return;
+        }
+        addItem(product, selectedSize);
     }
 
 
