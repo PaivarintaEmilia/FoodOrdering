@@ -8,7 +8,7 @@ import products from '@/assets/data/products';
 // Import the type of the product
 import { Product } from '../types';
 // Router import
-import { Link } from 'expo-router';
+import { Link, useSegments } from 'expo-router';
 
 
 // Url if there's no image
@@ -22,13 +22,14 @@ type ProductListItemProps = {
 
 
 const ProductListItem = ({ product }: ProductListItemProps) => {
+  // Helps to know if we are in a user or admin side (segment show the different screens that has been navigatet)
+  const segments = useSegments();
+
   return (
     /* Navigate to product-component */
     <Link 
-      href={{
-        pathname: '/(tabs)/menu/[id]', // Define the dynamic route
-        params: { id: product.id.toString() } // Pass the dynamic id parameter
-      }} asChild>
+      href={`./menu/${product.id}` // Define the dynamic route
+      } asChild>
       <Pressable style={styles.container}>
         <Image
           source={{ uri: product.image || defaultPizzaImage }}
