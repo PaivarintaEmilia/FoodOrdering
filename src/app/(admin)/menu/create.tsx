@@ -4,7 +4,7 @@ import Colors from '@/src/constants/Colors';
 import { useState } from 'react';
 import { View, Text, Image, StyleSheet, Pressable, TextInput } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { Stack } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 
 
 
@@ -16,6 +16,10 @@ const CreateProductScreen = () => {
     const [error, setError] = useState('');
 
     const [image, setImage] = useState<string | null>(null);
+
+    // We need the id to know which product we want to update
+    const {id} = useLocalSearchParams();
+    const isUpdating = !!id;
 
     const resetFields = () => {
         setName('');
@@ -39,6 +43,14 @@ const CreateProductScreen = () => {
         return true;
     }
 
+    const onSubmit = () => {
+        if (isUpdating) {
+            onUpdate();
+        } else {
+            onCreate();
+        }
+    }
+
     const onCreate = () => {
 
         if (!validateInput()) {
@@ -51,6 +63,21 @@ const CreateProductScreen = () => {
 
         resetFields();
     };
+    
+    const onUpdate = () => {
+
+        if (!validateInput()) {
+            return;
+        }
+
+        console.warn('Update product');
+
+        // Save in the database functionality
+
+        resetFields();
+    };
+
+    
 
 
     const pickImage = async () => {
@@ -70,7 +97,7 @@ const CreateProductScreen = () => {
     return (
         <View style={styles.container}>
 
-            <Stack.Screen options={{ title: "Create Product" }}/>
+            <Stack.Screen options={{ title: isUpdating ? "Update Product" : "Create Product" }}/>
 
             <Image source={{ uri: image || defaultPizzaImage }} style={styles.image} />
             <Text 
@@ -98,7 +125,7 @@ const CreateProductScreen = () => {
 
 
             <Text style={{ color: 'red' }}>{error}</Text>
-            <Button onPress={onCreate} text={'Create'} />
+            <Button onPress={onSubmit} text={ isUpdating? 'Update' : 'Create'} />
 
 
         </View>
