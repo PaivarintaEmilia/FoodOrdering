@@ -9,16 +9,40 @@ const CreateProductScreen = () => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
 
+    const [error, setError] = useState('');
+
     const resetFields = () => {
         setName('');
         setPrice('');
     }
 
+    const validateInput = () => {
+        setError('');
+        if (!name) {
+            setError('Name is required');
+            return false;
+        }
+        if (!price) {
+            setError('Price is required');
+            return false;
+        }
+        if (isNaN(parseFloat(price))) {
+            setError('Price is not a number');
+            return false;
+        }
+        return true;
+    }
+
     const onCreate = () => {
+
+        if (!validateInput()) {
+            return;
+        }
+
         console.warn('Create product');
 
         // Save in the database functionality
-        
+
         resetFields();
     };
 
@@ -43,6 +67,8 @@ const CreateProductScreen = () => {
                 keyboardType='numeric'
             />
 
+
+            <Text style={{ color: 'red' }}>{error}</Text>
             <Button onPress={onCreate} text={'Create'}/>
 
 
