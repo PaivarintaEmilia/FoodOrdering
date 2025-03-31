@@ -38,13 +38,10 @@ const ProductDetailScreen = () => {
     };
 
 
-
-
     // Check if the product exists 
     if (!product) {
         return <Text>Product not found</Text>
     };
-
 
     return (
         <View style={styles.container}>
@@ -55,37 +52,9 @@ const ProductDetailScreen = () => {
                 style={styles.image}
             />
 
-            {/** SIZE SELECTOR */}
-            <Text>Select Size</Text>
-
-            <View style={styles.sizes}>
-                {sizes.map((size) => (
-                    <Pressable
-                        onPress={() => {
-                            setSelectedSIze(size)
-                        }}
-                        style={[
-                            styles.size, 
-                            { 
-                                backgroundColor: selectedSize === size ? 'gainsboro' : 'white'
-                            }
-                        ]} key={size}>
-                        <Text 
-                            style={[
-                                styles.sizeText,
-                                {
-                                    color: selectedSize === size ? 'black' : 'grey'
-                                }
-                            ]}
-                        >{size}</Text>
-                    </Pressable>
-                ))}
-            </View>
-
+            <Text style={styles.price}>{product.name}</Text>
             <Text style={styles.price}>${product.price}</Text>
 
-            <Button onPress={addToCart} text='Add to Cart' ></Button>
-            <Button onPress={goToCart} text='Go to the Cart' ></Button>
 
         </View>
     );
@@ -105,25 +74,7 @@ const styles = StyleSheet.create({
     price: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginTop: 'auto',
-    },
-    sizes: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginVertical: 10,
-
-    },
-    size: {
-        backgroundColor: 'gainsboro',
-        width: 50,
-        aspectRatio: 1,
-        borderRadius: 25,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    sizeText: {
-        fontSize: 20,
-        fontWeight: '500',
+        marginTop: 15,
     },
 })
 
