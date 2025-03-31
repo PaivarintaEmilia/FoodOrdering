@@ -2,7 +2,7 @@ import Button from '@/src/components/Button';
 import { defaultPizzaImage } from '@/src/components/ProductListItem';
 import Colors from '@/src/constants/Colors';
 import { useState } from 'react';
-import { View, Text, Image, StyleSheet, Pressable, TextInput } from 'react-native';
+import { View, Text, Image, StyleSheet, Pressable, TextInput, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams } from 'expo-router';
 
@@ -94,6 +94,26 @@ const CreateProductScreen = () => {
         }
     }
 
+
+
+    /** Deletion */
+    const onDelete = () => {
+        console.warn('Deleted!!');
+    };
+
+    const confirmDelete = () => {
+        Alert.alert("Confirm", "Are you sure you want to delete the product?", [
+            {
+                text: 'Cancel',
+            },
+            {
+                text: 'Delete',
+                style: 'destructive',
+                onPress: onDelete,
+            },
+        ]);
+    };
+
     return (
         <View style={styles.container}>
 
@@ -126,6 +146,7 @@ const CreateProductScreen = () => {
 
             <Text style={{ color: 'red' }}>{error}</Text>
             <Button onPress={onSubmit} text={ isUpdating? 'Update' : 'Create'} />
+            {isUpdating && <Text onPress={confirmDelete} style={styles.textButton}>Delete</Text>}
 
 
         </View>
