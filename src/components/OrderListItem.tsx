@@ -9,8 +9,12 @@ import products from '@/assets/data/products';
 import { Order } from '../types';
 // Router import
 import { Link, useSegments } from 'expo-router';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 
+
+dayjs.extend(relativeTime);
 
 // Props of the order
 type OrderListItemProps = {
@@ -19,8 +23,8 @@ type OrderListItemProps = {
 
 
 const OrderListItem = ({ order }: OrderListItemProps) => {
-  // Helps to know if we are in a user or admin side (segment show the different screens that has been navigatet)
-  const segments = useSegments(); // Tarvitaanko?
+  // Helps to know if we are in a user or admin side (segment show the different screens that has been navigated)
+  const segments = useSegments(); 
 
   return (
     /* Navigate to single order page */
@@ -30,11 +34,10 @@ const OrderListItem = ({ order }: OrderListItemProps) => {
       <Pressable style={styles.container}>
         <View>
         <Text style={styles.title}>Order #{order.id}</Text>
-        <Text style={styles.price}>${order.created_at}</Text>
-
+        <Text style={styles.time}>{dayjs(order.created_at).fromNow()}</Text>
         </View>
 
-        <Text style={styles.price}>${order.status}</Text>
+        <Text style={styles.status}>{order.status}</Text>
 
       </Pressable>
     </Link>
@@ -48,23 +51,20 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     padding: 10,
-    borderRadius: 20,
-    flex: 1,
-    maxWidth: '50%',
-  },
-  image: {
-    width: '100%',
-    aspectRatio: 1,
+    borderRadius: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginVertical: 10,
+    marginVertical: 5,
   },
-  price: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginVertical: 10,
-    color: Colors.light.tint
-  }
+  time: {
+    color: 'gray',
+  },
+  status: {
+    fontWeight: '500',
+  },
 });
