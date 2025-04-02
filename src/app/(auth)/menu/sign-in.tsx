@@ -57,6 +57,7 @@ const SignInScreen = () => {
                 onChangeText={setPassword}
                 style={styles.input}
                 keyboardType='visible-password'
+                secureTextEntry
             />
 
 

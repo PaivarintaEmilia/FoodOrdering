@@ -20,6 +20,10 @@ const OrderDetailScreen = () => {
     const { id } = useLocalSearchParams();
     const { addItem } = useCart(); // Function imported from the context
 
+
+    <Stack.Screen options={{ title: 'Order ${id}' }}/>
+
+
     const router = useRouter();
 
     const [selectedSize, setSelectedSIze] = useState<PizzaSize>('M');

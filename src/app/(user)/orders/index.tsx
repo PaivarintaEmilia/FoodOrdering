@@ -17,9 +17,8 @@ export default function OrdersScreen() {
         data={orders} renderItem={({ item }) => <OrderListItem order={
                   item
               }/>}
-        numColumns={2}
+        numColumns={1}
         contentContainerStyle={{gap: 10, padding: 15}}
-        columnWrapperStyle={{gap: 10}}
       />
     </View>
   );

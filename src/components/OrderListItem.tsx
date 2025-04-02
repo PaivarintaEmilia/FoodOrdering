@@ -20,7 +20,7 @@ type OrderListItemProps = {
 
 const OrderListItem = ({ order }: OrderListItemProps) => {
   // Helps to know if we are in a user or admin side (segment show the different screens that has been navigatet)
-  const segments = useSegments();
+  const segments = useSegments(); // Tarvitaanko?
 
   return (
     /* Navigate to single order page */
@@ -28,9 +28,14 @@ const OrderListItem = ({ order }: OrderListItemProps) => {
       href={`./menu/${order.id}` // Define the dynamic route
       } asChild>
       <Pressable style={styles.container}>
+        <View>
+        <Text style={styles.title}>Order #{order.id}</Text>
+        <Text style={styles.price}>${order.created_at}</Text>
 
-        <Text style={styles.title}>{order.status}</Text>
+        </View>
+
         <Text style={styles.price}>${order.status}</Text>
+
       </Pressable>
     </Link>
   );
