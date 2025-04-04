@@ -29,7 +29,7 @@ const OrderListItem = ({ order }: OrderListItemProps) => {
   return (
     /* Navigate to single order page */
     <Link 
-      href={`./orders/${order.id}` // Define the dynamic route
+      href={`./${segments[0]}/orders/${order.id}` // Define the dynamic route
       } asChild>
       <Pressable style={styles.container}>
         <View>

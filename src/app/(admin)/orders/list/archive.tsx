@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet } from 'react-native';
-import { View } from '../../../components/Themed';
+import { View } from '../../../../components/Themed';
 // Import the instructors own assets
 import orders from '@assets/data/orders';
 // Import created child component 
