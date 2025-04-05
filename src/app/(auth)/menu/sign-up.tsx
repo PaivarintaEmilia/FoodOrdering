@@ -1,19 +1,30 @@
 import Button from '@/src/components/Button';
-import { defaultPizzaImage } from '@/src/components/ProductListItem';
 import Colors from '@/src/constants/Colors';
 import { useState } from 'react';
-import { View, Text, Image, StyleSheet, Pressable, TextInput, Alert } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { Link, Stack, useLocalSearchParams } from 'expo-router';
-
+import { View, Text, StyleSheet, TextInput, Alert } from 'react-native';
+import { Link, Stack } from 'expo-router';
+import { supabase } from '@/src/lib/supabase';
 
 
 const SignInScreen = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    // Loading state to prevent multiple signUp intentions
+    const [loading, setLoading] = useState(false);
 
     const [error, setError] = useState('');
+
+    async function signUpWithEmail() {
+
+        setLoading(true);
+
+        const { error } = await supabase.auth.signUp({ email, password });
+
+        if (error) Alert.alert(error.message);
+
+        setLoading(false);
+    }
 
 
     const validateInput = () => {
@@ -63,7 +74,7 @@ const SignInScreen = () => {
 
 
             <Text style={{ color: 'red' }}>{error}</Text>
-            <Button onPress={signUp} text="Sign Up" />
+            <Button onPress={signUpWithEmail} text={loading ? 'Creating account...' : 'Sign Up'} disabled={loading}/>
             <Link href={'/(auth)/menu/sign-in'} asChild>
                 <Text style={styles.textButton}>Sign In</Text>
             </Link>
