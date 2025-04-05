@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 // Import cartProvider for passing data
 import CartProvider from '../providers/CartProvider';
+import AuthProvider from '../providers/AuthProvider';
 
 import { useColorScheme } from '../components/useColorScheme';
 
@@ -52,6 +53,7 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <AuthProvider>
       <CartProvider>
         <Stack>
         <Stack.Screen name="(user)" options={{ headerShown: false }} />
@@ -60,6 +62,7 @@ function RootLayoutNav() {
           <Stack.Screen name="cart" options={{ presentation: 'modal' }} />
         </Stack>
       </CartProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
