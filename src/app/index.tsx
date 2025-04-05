@@ -4,6 +4,7 @@ import React from 'react';
 import Button from '../components/Button';
 import { Link, Redirect } from 'expo-router';
 import { useAuth } from '../providers/AuthProvider';
+import { supabase } from '../lib/supabase';
 
 const index = () => {
   const {session, loading} = useAuth();
@@ -30,6 +31,9 @@ const index = () => {
       <Link href={'/(auth)/menu/sign-in'} asChild>
         <Button text="Sign in" />
       </Link>
+
+      <Button onPress={() => supabase.auth.signOut()} text="Sign out" />
+
     </View>
   );
 };
