@@ -13,7 +13,6 @@ const SignInScreen = () => {
     // Loading state to prevent multiple signUp intentions
     const [loading, setLoading] = useState(false);
 
-    const [error, setError] = useState('');
 
     async function signUpWithEmail() {
 
@@ -26,27 +25,6 @@ const SignInScreen = () => {
         setLoading(false);
     }
 
-
-    const validateInput = () => {
-        setError('');
-        if (!email) {
-            setError('Email is required');
-            return false;
-        }
-        if (!password) {
-            setError('Password is required');
-            return false;
-        }
-        return true;
-    }
-
-    const signUp = () => {
-        if (validateInput()) {
-            // Sign in functionality
-        } else {
-            return;
-        }
-    }
 
 
     return (
@@ -72,8 +50,6 @@ const SignInScreen = () => {
                 keyboardType='visible-password'
             />
 
-
-            <Text style={{ color: 'red' }}>{error}</Text>
             <Button onPress={signUpWithEmail} text={loading ? 'Creating account...' : 'Sign Up'} disabled={loading}/>
             <Link href={'/(auth)/menu/sign-in'} asChild>
                 <Text style={styles.textButton}>Sign In</Text>
