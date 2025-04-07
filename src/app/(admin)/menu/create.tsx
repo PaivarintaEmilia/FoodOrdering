@@ -1,11 +1,11 @@
 import Button from '@/src/components/Button';
 import { defaultPizzaImage } from '@/src/components/ProductListItem';
 import Colors from '@/src/constants/Colors';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, Pressable, TextInput, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useInsertProduct } from '@/src/api/products';
+import { useInsertProduct, useProduct, useUpdateProduct } from '@/src/api/products';
 
 
 
@@ -19,13 +19,24 @@ const CreateProductScreen = () => {
     const [image, setImage] = useState<string | null>(null);
 
     // We need the id to know which product we want to update
-    const { id } = useLocalSearchParams();
+    const { id: idString } = useLocalSearchParams();
+    const id = parseFloat(typeof idString === 'string' ? idString : idString?.[0]);
     const isUpdating = !!id;
 
     // Insert new product to Supabase
     const { mutate: insertProduct } = useInsertProduct();
+    const { mutate: updateProduct } = useUpdateProduct();
+    const { data: productDetails } = useProduct(id);
 
     const router = useRouter();
+
+    useEffect(() => {
+        if (productDetails) {
+            setName(productDetails.name);
+            setPrice(productDetails.price.toString());
+            setImage(productDetails.image);
+        }
+    }, [productDetails])
 
 
     const resetFields = () => {
@@ -64,7 +75,7 @@ const CreateProductScreen = () => {
             return;
         }
 
-        insertProduct({ name, price: parseFloat(price), image },{
+        insertProduct({ name, price: parseFloat(price), image }, {
             onSuccess: () => {
                 resetFields();
                 router.back();
@@ -78,11 +89,12 @@ const CreateProductScreen = () => {
             return;
         }
 
-        console.warn('Update product');
-
-        // Save in the database functionality
-
-        resetFields();
+        updateProduct({ id, name, price: parseFloat(price), image }, {
+            onSuccess: () => {
+                resetFields();
+                router.back();
+            },
+        })
     };
 
 

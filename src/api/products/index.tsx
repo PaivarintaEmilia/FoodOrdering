@@ -39,28 +39,68 @@ export const useProduct = (id: number) => {
 // Create product
 export const useInsertProduct = () => {
     const queryClient = useQueryClient();
+
+    return useMutation({
+        async mutationFn(data: any) {
+            const { error, data: newProduct } = await supabase
+                .from('products')
+                .insert({
+                    name: data.name,
+                    image: data.image,
+                    price: data.price,
+                })
+                .single();
+
+            if (error) {
+                throw new Error(error.message);
+            }
+            return newProduct;
+        },
+        async onSuccess() {
+            await queryClient.invalidateQueries({
+                queryKey: ['products'],
+                refetchType: 'all',
+            });
+        },
+    });
+};
+
+
+// Update a product
+export const useUpdateProduct = () => {
+    const queryClient = useQueryClient();
   
     return useMutation({
       async mutationFn(data: any) {
-        const { error, data: newProduct } = await supabase
+        const { data: updatedProduct, error } = await supabase
           .from('products')
-          .insert({
+          .update({
             name: data.name,
             image: data.image,
             price: data.price,
           })
-          .single();
+          .eq('id', data.id)
+          .select();
+        
   
         if (error) {
-          throw new Error(error.message);
+          throw error;
         }
-        return newProduct;
+        return updatedProduct;
       },
-      async onSuccess() {
+      async onSuccess(_, { id }) {
         await queryClient.invalidateQueries({
             queryKey: ['products'],
-            refetchType: 'active',
+            refetchType: 'all',
         });
+        await queryClient.invalidateQueries({
+            queryKey: ['product', id],
+            refetchType: 'all',
+        });
+
+      },
+      onError(error) {
+        console.log(error);
       },
     });
   };
