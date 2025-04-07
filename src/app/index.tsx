@@ -7,7 +7,7 @@ import { useAuth } from '../providers/AuthProvider';
 import { supabase } from '../lib/supabase';
 
 const index = () => {
-  const {session, loading} = useAuth();
+  const {session, loading, isAdmin} = useAuth();
 
   if (loading) {
     return <ActivityIndicator />; // Creates a spinner while Auth provider is fetching session data from Supabase
@@ -15,6 +15,10 @@ const index = () => {
 
   if (!session) {
     return <Redirect href={'/(auth)/menu/sign-in'} />;
+  }
+
+  if (!isAdmin) {
+    return <Redirect href={'/(user)'} />;
   }
 
   return (
