@@ -1,5 +1,5 @@
 import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
+import { View, Text, Image, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 // Import the data, so we can get the correct pizzaz data
 import products from '@/assets/data/products';
 import { defaultPizzaImage } from '@/src/components/ProductListItem';
@@ -12,20 +12,22 @@ import { useCart } from '@/src/providers/CartProvider';
 import { PizzaSize } from '@/src/types';
 import { FontAwesome } from '@expo/vector-icons';
 import Colors from '@/src/constants/Colors';
+import { useProduct } from '@/src/api/products';
 
 const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL',]
 
 const ProductDetailScreen = () => {
     // With this we get the id from previous screen
-    const { id } = useLocalSearchParams();
+    const { id: idString } = useLocalSearchParams();
+    const id = parseFloat(typeof idString === 'string' ? idString : idString[0]);
+
+    const { data: product, error, isLoading } = useProduct(id);
+
     const { addItem } = useCart(); // Function imported from the context
 
     const router = useRouter();
 
     const [selectedSize, setSelectedSIze] = useState<PizzaSize>('M');
-
-    // Get the correct data of a pizza
-    const product = products.find((p) => p.id.toString() == id);
 
     // Function for Button-element adding to cart
     const addToCart = () => {
@@ -44,6 +46,15 @@ const ProductDetailScreen = () => {
     if (!product) {
         return <Text>Product not found</Text>
     };
+    
+    if (isLoading) {
+        return <ActivityIndicator />;
+    };
+
+    if (error) {
+        return <Text>Failed to fetch products</Text>
+    }
+
 
     return (
         <View style={styles.container}>
