@@ -1,5 +1,5 @@
 import { supabase } from "@/src/lib/supabase";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 // Custom Hook to fetch all the product data
 export const useProductList = () => {
@@ -34,3 +34,33 @@ export const useProduct = (id: number) => {
         },
     });
 };
+
+
+// Create product
+export const useInsertProduct = () => {
+    const queryClient = useQueryClient();
+  
+    return useMutation({
+      async mutationFn(data: any) {
+        const { error, data: newProduct } = await supabase
+          .from('products')
+          .insert({
+            name: data.name,
+            image: data.image,
+            price: data.price,
+          })
+          .single();
+  
+        if (error) {
+          throw new Error(error.message);
+        }
+        return newProduct;
+      },
+      async onSuccess() {
+        await queryClient.invalidateQueries({
+            queryKey: ['products'],
+            refetchType: 'active',
+        });
+      },
+    });
+  };

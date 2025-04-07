@@ -4,7 +4,8 @@ import Colors from '@/src/constants/Colors';
 import { useState } from 'react';
 import { View, Text, Image, StyleSheet, Pressable, TextInput, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useInsertProduct } from '@/src/api/products';
 
 
 
@@ -18,8 +19,14 @@ const CreateProductScreen = () => {
     const [image, setImage] = useState<string | null>(null);
 
     // We need the id to know which product we want to update
-    const {id} = useLocalSearchParams();
+    const { id } = useLocalSearchParams();
     const isUpdating = !!id;
+
+    // Insert new product to Supabase
+    const { mutate: insertProduct } = useInsertProduct();
+
+    const router = useRouter();
+
 
     const resetFields = () => {
         setName('');
@@ -57,13 +64,14 @@ const CreateProductScreen = () => {
             return;
         }
 
-        console.warn('Create product');
-
-        // Save in the database functionality
-
-        resetFields();
+        insertProduct({ name, price: parseFloat(price), image },{
+            onSuccess: () => {
+                resetFields();
+                router.back();
+            },
+        });
     };
-    
+
     const onUpdate = () => {
 
         if (!validateInput()) {
@@ -77,7 +85,7 @@ const CreateProductScreen = () => {
         resetFields();
     };
 
-    
+
 
 
     const pickImage = async () => {
@@ -117,10 +125,10 @@ const CreateProductScreen = () => {
     return (
         <View style={styles.container}>
 
-            <Stack.Screen options={{ title: isUpdating ? "Update Product" : "Create Product" }}/>
+            <Stack.Screen options={{ title: isUpdating ? "Update Product" : "Create Product" }} />
 
             <Image source={{ uri: image || defaultPizzaImage }} style={styles.image} />
-            <Text 
+            <Text
                 onPress={pickImage}
                 style={styles.textButton}
             >Select image</Text>
@@ -145,7 +153,7 @@ const CreateProductScreen = () => {
 
 
             <Text style={{ color: 'red' }}>{error}</Text>
-            <Button onPress={onSubmit} text={ isUpdating? 'Update' : 'Create'} />
+            <Button onPress={onSubmit} text={isUpdating ? 'Update' : 'Create'} />
             {isUpdating && <Text onPress={confirmDelete} style={styles.textButton}>Delete</Text>}
 
 
