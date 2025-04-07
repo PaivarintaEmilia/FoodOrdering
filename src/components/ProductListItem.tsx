@@ -6,7 +6,7 @@ import Colors from '@/src/constants/Colors';
 // Import the instructors own assets
 import products from '@/assets/data/products';
 // Import the type of the product
-import { Product } from '../types';
+import { Tables } from '../types';
 // Router import
 import { Link, useSegments } from 'expo-router';
 
@@ -17,7 +17,7 @@ export const defaultPizzaImage =
 
 // Props of the product
 type ProductListItemProps = {
-  product: Product;
+  product: Tables<'products'>;
 }
 
 
