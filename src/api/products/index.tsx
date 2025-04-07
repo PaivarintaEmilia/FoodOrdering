@@ -69,38 +69,57 @@ export const useInsertProduct = () => {
 // Update a product
 export const useUpdateProduct = () => {
     const queryClient = useQueryClient();
-  
-    return useMutation({
-      async mutationFn(data: any) {
-        const { data: updatedProduct, error } = await supabase
-          .from('products')
-          .update({
-            name: data.name,
-            image: data.image,
-            price: data.price,
-          })
-          .eq('id', data.id)
-          .select();
-        
-  
-        if (error) {
-          throw error;
-        }
-        return updatedProduct;
-      },
-      async onSuccess(_, { id }) {
-        await queryClient.invalidateQueries({
-            queryKey: ['products'],
-            refetchType: 'all',
-        });
-        await queryClient.invalidateQueries({
-            queryKey: ['product', id],
-            refetchType: 'all',
-        });
 
-      },
-      onError(error) {
-        console.log(error);
-      },
+    return useMutation({
+        async mutationFn(data: any) {
+            const { data: updatedProduct, error } = await supabase
+                .from('products')
+                .update({
+                    name: data.name,
+                    image: data.image,
+                    price: data.price,
+                })
+                .eq('id', data.id)
+                .select();
+
+
+            if (error) {
+                throw new Error(error.message);
+            }
+            return updatedProduct;
+        },
+        async onSuccess(_, { id }) {
+            await queryClient.invalidateQueries({
+                queryKey: ['products'],
+                refetchType: 'all',
+            });
+            await queryClient.invalidateQueries({
+                queryKey: ['product', id],
+                refetchType: 'all',
+            });
+        },
+        onError(error) {
+            console.log(error);
+        },
     });
-  };
+};
+
+// Delete the product
+export const useDeleteProduct = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        async mutationFn(id: number) {
+            const { error } = await supabase.from('products').delete().eq('id', id);
+            if (error) {
+                throw new Error(error.message);
+            }
+        },
+        async onSuccess() {
+            await queryClient.invalidateQueries({
+                queryKey: ['products'],
+                refetchType: 'all',
+            });
+        },
+    });
+};
