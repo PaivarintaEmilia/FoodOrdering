@@ -5,11 +5,17 @@ import { useQuery } from "@tanstack/react-query";
 
 
 // Custom Hook to fetch all the orders data
-export const useAdminOrdertList = () => {
+export const useAdminOrdertList = ({ archived = false }) => {
+
+    const statuses = archived ? ['Delivered'] : ['New', 'Cooking', 'Delivering'];
+
     return useQuery({
-        queryKey: ['orders'],
+        queryKey: ['orders', { archived }],
         queryFn: async () => {
-            const { data, error } = await supabase.from('orders').select('*');
+            const { data, error } = await supabase
+                .from('orders')
+                .select('*')
+                .in('status', statuses);
 
             if (error) {
                 throw new Error(error.message);
