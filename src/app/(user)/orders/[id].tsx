@@ -1,23 +1,31 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import orders from '@/assets/data/orders';
 import OrderListItem from '@/src/components/OrderListItem';
 import OrderItemListItem from '@/src/components/OrderItemListItem';
+import { useOrderById } from '@/src/api/orders';
 
 
 /* SINGLE ORDER LIST ITEM PAGE */
 
 const OrderDetailScreen = () => {
-    // With this we get the id from previous screen
-    const { id } = useLocalSearchParams();
+    const { id: idString } = useLocalSearchParams();
+    const id = parseFloat(typeof idString === 'string' ? idString : idString[0]);
 
-    // Get the correct data of an order
-    const order = orders.find((o) => o.id.toString() == id);
+    const { data: order, isLoading, error } = useOrderById(id);
 
     // Check if the order exists 
     if (!order) {
         return <Text>Order not found</Text>
     };
+
+    if (isLoading) {
+        return <ActivityIndicator />;
+    };
+
+    if (error) {
+        return <Text>Failed to fetch products</Text>
+    }
 
 
     return (
@@ -27,9 +35,9 @@ const OrderDetailScreen = () => {
 
             <OrderListItem order={order} />
 
-            <FlatList 
-                data={order.order_items}
-                renderItem={({ item }) => <OrderItemListItem item={ item } />}
+            <FlatList
+                data={order}
+                renderItem={({ item }) => <OrderItemListItem item={item} />}
                 contentContainerStyle={{ gap: 10 }}
             />
         </View>

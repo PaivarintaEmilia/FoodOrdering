@@ -20,7 +20,7 @@ export const useProductList = () => {
 // Custom Hook to fetch the product data of one item
 export const useProduct = (id: number) => {
     return useQuery({
-        queryKey: ['product', id],
+        queryKey: ['products', id],
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('products')

@@ -1,27 +1,34 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { View, Text, StyleSheet, FlatList, Pressable } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable, ActivityIndicator } from 'react-native';
 import orders from '@/assets/data/orders';
 import OrderListItem from '@/src/components/OrderListItem';
 import OrderItemListItem from '@/src/components/OrderItemListItem';
 import { OrderStatusList } from '@/src/types';
 import Colors from '@/src/constants/Colors';
+import { useOrderById } from '@/src/api/orders';
 
 
 /* SINGLE ORDER LIST ITEM PAGE (order details) */
 
 const OrderDetailScreen = () => {
-    // With this we get the id from previous screen
-    const { id } = useLocalSearchParams();
+    const { id: idString } = useLocalSearchParams();
+    const id = parseFloat(typeof idString === 'string' ? idString : idString[0]);
 
-    console.warn(id);
-
-    // Get the correct data of an order
-    const order = orders.find((o) => o.id.toString() == id);
+    const { data: order, isLoading, error } = useOrderById(id);
 
     // Check if the order exists 
     if (!order) {
         return <Text>Order not found</Text>
     };
+
+    if (isLoading) {
+        return <ActivityIndicator />;
+    };
+
+    if (error) {
+        return <Text>Failed to fetch products</Text>
+    }
+
 
 
     return (
@@ -37,38 +44,38 @@ const OrderDetailScreen = () => {
                 contentContainerStyle={{ gap: 10 }}
                 /** Order status changer */
                 ListFooterComponent={() => (
-                        <>
-                            <Text style={{ fontWeight: 'bold' }}>Status</Text>
-                            <View style={{ flexDirection: 'row', gap: 5 }}>
-                                {OrderStatusList.map((status) => (
-                                    <Pressable
-                                        key={status}
-                                        onPress={() => console.warn('Update status')}
+                    <>
+                        <Text style={{ fontWeight: 'bold' }}>Status</Text>
+                        <View style={{ flexDirection: 'row', gap: 5 }}>
+                            {OrderStatusList.map((status) => (
+                                <Pressable
+                                    key={status}
+                                    onPress={() => console.warn('Update status')}
+                                    style={{
+                                        borderColor: Colors.light.tint,
+                                        borderWidth: 1,
+                                        padding: 10,
+                                        borderRadius: 5,
+                                        marginVertical: 10,
+                                        backgroundColor:
+                                            order.status === status
+                                                ? Colors.light.tint
+                                                : 'transparent',
+                                    }}
+                                >
+                                    <Text
                                         style={{
-                                            borderColor: Colors.light.tint,
-                                            borderWidth: 1,
-                                            padding: 10,
-                                            borderRadius: 5,
-                                            marginVertical: 10,
-                                            backgroundColor:
-                                                order.status === status
-                                                    ? Colors.light.tint
-                                                    : 'transparent',
+                                            color:
+                                                order.status === status ? 'white' : Colors.light.tint,
                                         }}
                                     >
-                                        <Text
-                                            style={{
-                                                color:
-                                                    order.status === status ? 'white' : Colors.light.tint,
-                                            }}
-                                        >
-                                            {status}
-                                        </Text>
-                                    </Pressable>
-                                ))}
-                            </View>
-                        </>
-                    )
+                                        {status}
+                                    </Text>
+                                </Pressable>
+                            ))}
+                        </View>
+                    </>
+                )
                 }
             />
         </View>

@@ -51,3 +51,22 @@ export const useMyOrdertList = () => {
         },
     });
 }
+
+// Fetch order by id
+// Custom Hook to fetch the product data of one item
+export const useOrderById = (id: number) => {
+    return useQuery({
+        queryKey: ['orders', id],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('orders')
+                .select('*')
+                .eq('id', id)
+                .single();
+            if (error) {
+                throw new Error(error.message);
+            }
+            return data;
+        },
+    });
+};
