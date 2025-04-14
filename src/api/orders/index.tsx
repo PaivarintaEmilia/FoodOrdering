@@ -1,7 +1,8 @@
 import { supabase } from "@/src/lib/supabase";
 import { useAuth } from "@/src/providers/AuthProvider";
-import { useQuery } from "@tanstack/react-query";
-
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Tables } from '../../database.types';
+import { InsertTables } from "@/src/types";
 
 
 // Custom Hook to fetch all the orders data
@@ -53,7 +54,7 @@ export const useMyOrdertList = () => {
 }
 
 // Fetch order by id
-// Custom Hook to fetch the product data of one item
+// Custom Hook to fetch the order data of one item
 export const useOrderById = (id: number) => {
     return useQuery({
         queryKey: ['orders', id],
@@ -67,6 +68,36 @@ export const useOrderById = (id: number) => {
                 throw new Error(error.message);
             }
             return data;
+        },
+    });
+};
+
+
+// Create order
+export const useInsertOrder = () => {
+    const queryClient = useQueryClient();
+
+    const { session } = useAuth();
+    const userId = session?.user.id;
+
+    return useMutation({
+        async mutationFn(data: InsertTables<'orders'>) {
+            const { error, data: newOrder } = await supabase
+                .from('orders')
+                .insert({ ...data, user_id: userId })
+                .select()
+                .single();
+
+            if (error) {
+                throw new Error(error.message);
+            }
+            return newOrder;
+        },
+        async onSuccess(data) {
+            await queryClient.invalidateQueries({
+                queryKey: ['orders'],
+                refetchType: 'all',
+            });
         },
     });
 };
