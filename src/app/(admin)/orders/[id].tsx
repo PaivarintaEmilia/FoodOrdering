@@ -25,7 +25,7 @@ const OrderDetailScreen = () => {
         return <ActivityIndicator />;
     };
 
-    if (error) {
+    if (error || !order) {
         return <Text>Failed to fetch products</Text>
     }
 
@@ -39,7 +39,7 @@ const OrderDetailScreen = () => {
             <OrderListItem order={order} />
 
             <FlatList
-                data={order}
+                data={order.order_items}
                 renderItem={({ item }) => <OrderItemListItem item={item} />}
                 contentContainerStyle={{ gap: 10 }}
                 /** Order status changer */
