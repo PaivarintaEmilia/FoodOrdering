@@ -2,7 +2,7 @@ import { supabase } from "@/src/lib/supabase";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Tables } from '../../database.types';
-import { InsertTables } from "@/src/types";
+import { InsertTables, UpdateTables } from "@/src/types";
 
 
 // Custom Hook to fetch all the orders data
@@ -100,6 +100,47 @@ export const useInsertOrder = () => {
                 queryKey: ['orders'],
                 refetchType: 'all',
             });
+        },
+    });
+};
+
+
+// Update a order
+export const useUpdateOrder = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        async mutationFn({
+            id, 
+            updatedField,
+        }: {
+            id: number;
+            updatedField: UpdateTables<'orders'>;
+        }) {
+            const { data: updatedOrder, error } = await supabase
+                .from('orders')
+                .update(updatedField)
+                .eq('id', id)
+                .select();
+
+
+            if (error) {
+                throw new Error(error.message);
+            }
+            return updatedOrder;
+        },
+        async onSuccess(_, { id }) {
+            await queryClient.invalidateQueries({
+                queryKey: ['orders'],
+                refetchType: 'all',
+            });
+            await queryClient.invalidateQueries({
+                queryKey: ['orders', id],
+                refetchType: 'all',
+            });
+        },
+        onError(error) {
+            console.log(error);
         },
     });
 };

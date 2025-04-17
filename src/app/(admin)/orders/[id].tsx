@@ -5,7 +5,7 @@ import OrderListItem from '@/src/components/OrderListItem';
 import OrderItemListItem from '@/src/components/OrderItemListItem';
 import { OrderStatusList } from '@/src/types';
 import Colors from '@/src/constants/Colors';
-import { useOrderById } from '@/src/api/orders';
+import { useOrderById, useUpdateOrder } from '@/src/api/orders';
 
 
 /* SINGLE ORDER LIST ITEM PAGE (order details) */
@@ -15,6 +15,11 @@ const OrderDetailScreen = () => {
     const id = parseFloat(typeof idString === 'string' ? idString : idString[0]);
 
     const { data: order, isLoading, error } = useOrderById(id);
+    const { mutate: updateOrder } = useUpdateOrder();
+
+    const updateStatus = (status: string) => {
+        updateOrder({id: id, updatedField: {status}});
+    };
 
     // Check if the order exists 
     if (!order) {
@@ -50,7 +55,7 @@ const OrderDetailScreen = () => {
                             {OrderStatusList.map((status) => (
                                 <Pressable
                                     key={status}
-                                    onPress={() => console.warn('Update status')}
+                                    onPress={() => updateStatus(status)}
                                     style={{
                                         borderColor: Colors.light.tint,
                                         borderWidth: 1,
