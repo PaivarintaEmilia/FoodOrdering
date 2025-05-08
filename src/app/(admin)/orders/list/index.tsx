@@ -3,17 +3,39 @@ import { View } from '../../../../components/Themed';
 // Import created child component 
 import OrderListItem from '@/src/components/OrderListItem';
 import { useAdminOrdertList } from '@/src/api/orders';
+import { useEffect } from 'react';
+import { supabase } from '@/src/lib/supabase';
+import { useQueryClient } from '@tanstack/react-query';
 
 
 
-/*THIS IS THE HOME SCREEN*/
+/*THIS IS THE ACTIVE SCREEN*/
 export default function OrdersScreen() {
 
-  const { 
-    data: orders, 
-    isLoading, 
+  const {
+    data: orders,
+    isLoading,
     error,
-  } = useAdminOrdertList({ archived : true });
+  } = useAdminOrdertList({ archived: false });
+
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+
+
+    const orders = supabase.channel('custom-insert-channel')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'orders' },
+        (payload) => {
+          queryClient.invalidateQueries({
+            queryKey: ['orders'],
+        });
+        }
+      )
+      .subscribe()
+
+  }, []);
 
   if (isLoading) {
     return <ActivityIndicator />;

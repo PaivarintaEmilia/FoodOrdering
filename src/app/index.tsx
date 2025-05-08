@@ -12,13 +12,13 @@ const index = () => {
   if (loading) {
     return <ActivityIndicator />; // Creates a spinner while Auth provider is fetching session data from Supabase
   }
-
+  // /sign-in
   if (!session) {
-    return <Redirect href={'/(auth)/menu/sign-in'} />;
+    return <Redirect href={'/'} />;
   }
 
   if (!isAdmin) {
-    return <Redirect href={'/(user)'} />;
+    return <Redirect href={'/(user)/menu'} />;
   }
 
   return (
